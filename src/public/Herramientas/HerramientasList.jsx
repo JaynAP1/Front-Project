@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './HerramientasList.css';
 
 const HerramientasList = () => {
   const [herramientas, setHerramientas] = useState([]);
