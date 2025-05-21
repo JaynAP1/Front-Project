@@ -52,6 +52,7 @@ function App() {
     })
     .then(data => {
         if (data.token) {
+            localStorage.setItem('id', data.id);
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', data.email ? data.email : user.email);
             localStorage.setItem('name', data.nombre1 ? data.nombre1 : user.name);

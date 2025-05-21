@@ -14,6 +14,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/home" element={<Home />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/" element={<App />} />
+        <Route path="/agregar" element={<AgregarHerramienta />} />
+        <Route path="/editar-herramienta/:id" element={<EditarHerramienta />} />
+        <Route path="/listadoHerramientaProveedor" element={<ListaHerramientasProveedor proveedorId={1} />} />
+        <Route path="/reserva" element={<Reservas />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
