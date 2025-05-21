@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './Reservas.css';
-import Header from '../../components/Header/Header';
 
 function Reservas() {
     const [reservas, setReservas] = useState([]);
@@ -69,7 +68,7 @@ function Reservas() {
 
     return (
         <>
-            <Header />
+         
             <div className="reservas-container">
                 <h1 className='tittle'>Lista de Reservas</h1>
 
