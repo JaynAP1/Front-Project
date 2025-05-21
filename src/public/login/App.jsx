@@ -1,8 +1,10 @@
 import './App.css'
 import { useState } from 'react'
-import ModalError from './components/ModalError/modalError'
+import ModalError from '../../components/ModalError/modalError'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -51,6 +53,10 @@ function App() {
     .then(data => {
         if (data.token) {
             localStorage.setItem('token', data.token);
+            localStorage.setItem('email', data.email ? data.email : user.email);
+            localStorage.setItem('name', data.nombre1 ? data.nombre1 : user.name);
+            localStorage.setItem('lastname', data.apellido1 ? data.apellido1 : user.lastname);
+            navigate('/home');
         }
     })
     .catch(err => {
@@ -81,9 +87,12 @@ function App() {
       </header>
       <main>
         <div className="container">
-          <div className="Casco">
-            <img src={'./src/assets/casco.png'} alt="casco" />
+          <div className="box2">
+            <div className="box1">
+              <img className='Casco' src={'./src/assets/casco.png'} alt="casco" />
+            </div>
           </div>  
+          
           <form className="session-form" onSubmit={handleSubmit}>
             <div className="logo">
               <img src={'./src/assets/logo.png'} alt="logo" />
