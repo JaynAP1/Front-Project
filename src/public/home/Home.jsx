@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Home() {
     const navigate = useNavigate();
@@ -62,7 +63,7 @@ function Home() {
                                 <h5>Herramientas</h5>
                             </div>
                             <div className="direction-item">
-                                <h5>Herramientas</h5>
+                                <Link to="/reserva" className="nav-link" onClick={() => setMenuOpen(false)}>Reserva</Link>
                             </div>
                         </div>
                     </div>

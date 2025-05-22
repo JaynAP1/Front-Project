@@ -18,8 +18,10 @@ function Reservas() {
         fetch('http://localhost:8080/reservas/', {
             method: 'POST',
             headers: {
-                "Content-Type": "application/json"
-            }
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
         })
         .then(res => {
             if (!res.ok) throw new Error('Error al obtener las reservas');
@@ -51,8 +53,10 @@ function Reservas() {
         fetch(`http://localhost:8080/reservas/?${queryParams.toString()}`, {
             method: 'POST',
             headers: {
-                "Content-Type": "application/json"
-            }
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin',
         })
         .then(res => {
             if (!res.ok) throw new Error('Error al filtrar reservas');
@@ -140,7 +144,12 @@ function Reservas() {
                         <form onSubmit={e => {
                             e.preventDefault();
                             fetch(`http://localhost:8080/reservas/crear?usuarioId=${usuarioId}&herramientaId=${herramientaId}&fechaInicio=${fechaInicio+':00'}&fechaFin=${fechaFin+':00'}`, {
-                                method: 'POST'
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                credentials: 'same-origin',
                             })
                             .then(res => {
                                 if (!res.ok) throw new Error("Error al crear la reserva");
@@ -192,7 +201,12 @@ function Reservas() {
                                 
                                 // Paso 3: Enviar la solicitud de actualización
                                 await fetch(`http://localhost:8080/reservas/actualizar?reservaId=${reservaIdActualizar}&fechaFin=${fechaFinal}&estado=${estadoFinal}`, {
-                                    method: 'PUT'
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    },
+                                    credentials: 'same-origin',
                                 });
 
                                 obtenerReservas();
