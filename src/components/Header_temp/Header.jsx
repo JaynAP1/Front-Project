@@ -1,20 +1,50 @@
-import './Header.css';
+import React from 'react';
+import './styles.css';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Header() {
-    const redirectTo = (path) => {
-        window.location.href = path;
+
+const Header = () => {
+    const navigate = useNavigate();
+    const toggleUserMenu = () => {
+        setShowUserButtons(!showUserButtons);
     };
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('name');
+        localStorage.removeItem('lastname');
+        navigate('/login');
+    };
+    const [showUserButtons, setShowUserButtons] = useState(true);
+
 
     return (
         <header className="header">
-        <div className="logo">Lucaje</div>
-        <nav className="nav-links">
-            <button onClick={() => redirectTo('/reservas')}>Reservas</button>
-            <button onClick={() => redirectTo('/herramientas')}>Herramientas</button>
-            <button onClick={() => redirectTo('/clientes')}>Clientes</button>
-        </nav>
+            <div className="logoHeader">
+                <h1>Lucaje</h1>
+                <img src="src\assets\logoBlanco.png" alt="Logo" />
+            </div>
+            <div className="directions">
+                <h4>Catalogo</h4>
+                <h4 onClick={() => navigate('/reserva')}>Reservas</h4>
+            </div>
+            <div className="user">
+                <img
+                    onClick={toggleUserMenu}
+                    src="/src/assets/user.png"
+                    alt="Usuario"
+                    className="user-icon"
+                />
+                {!showUserButtons && (
+                    <div className="user-buttons">
+                        <button onClick={() => navigate('/perfil')}>Perfil</button>
+                        <button onClick={handleLogout}>Cerrar sesión</button>
+                    </div>
+                )}
+            </div>
         </header>
     );
-}
+};
 
 export default Header;
