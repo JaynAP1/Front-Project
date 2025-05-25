@@ -18,7 +18,6 @@ const Header = () => {
     };
     const [showUserButtons, setShowUserButtons] = useState(true);
 
-
     return (
         <header className="header">
             <div className="logoHeader">
@@ -32,7 +31,7 @@ const Header = () => {
             <div className="user">
                 <img
                     onClick={toggleUserMenu}
-                    src="/src/assets/user.png"
+                    src="https://www.pngitem.com/pimgs/m/551-5510463_default-user-image-png-transparent-png.png"
                     alt="Usuario"
                     className="user-icon"
                 />

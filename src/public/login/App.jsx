@@ -57,6 +57,7 @@ function App() {
             localStorage.setItem('email', data.email ? data.email : user.email);
             localStorage.setItem('name', data.nombre1 ? data.nombre1 : user.name);
             localStorage.setItem('lastname', data.apellido1 ? data.apellido1 : user.lastname);
+            localStorage.setItem('role',data.role)
             navigate('/home');
         }
     })
