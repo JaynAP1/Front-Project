@@ -11,6 +11,7 @@
     font-size: 2em;
     text-align: center;
     margin-left: 100px;
+    color: white;
 }
 
 .user-buttons {
@@ -31,36 +32,6 @@
 .home-container {
     width: 100%;
     min-height: 100vh;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.logoHeader {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.logoHeader img {
-    height: 40px;
-}
-
-.user {
-    position: relative;
-}
-
-.user-icon {
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    border-radius: 50%;
 }
 
 .user-buttons {
@@ -102,7 +73,16 @@ header {
 .directions {
     display: flex;
     gap: 2rem;
-    margin-top: 2rem;
+}
+.directions h4 {
+    cursor: pointer;
+    background-color: #A5ABAF;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.directions h4:hover {
+    background-color: #8e9092;
 }
 .direction-item {
     background-color: #A5ABAF;

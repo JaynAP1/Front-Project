@@ -47,11 +47,10 @@ header {
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #2F2A25;
-
+  
+  overflow: hidden;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  
 }
