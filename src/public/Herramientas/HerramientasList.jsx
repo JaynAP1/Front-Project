@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './HerramientasList.css';
 
 const HerramientasList = () => {
   const [herramientas, setHerramientas] = useState([]);
@@ -7,7 +8,6 @@ const HerramientasList = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
 
-  // Estados para reserva
   const [modalOpen, setModalOpen] = useState(false);
   const [herramientaSeleccionada, setHerramientaSeleccionada] = useState(null);
   const [fechaInicio, setFechaInicio] = useState('');
@@ -17,17 +17,27 @@ const HerramientasList = () => {
   const [reservaSuccess, setReservaSuccess] = useState(null);
   const [reservaLoading, setReservaLoading] = useState(false);
 
+  const token = localStorage.getItem('token'); 
+
   useEffect(() => {
     const fetchHerramientas = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('http://localhost:8080/api/herramientas');
+
+        const response = await fetch('http://localhost:8080/api/herramientas', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
         if (!response.ok) {
           throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
+
         const data = await response.json();
         setHerramientas(data);
+
         const uniqueCategories = [...new Set(data.map(h => h.categoria))];
         setCategories(uniqueCategories);
       } catch (err) {
@@ -36,8 +46,9 @@ const HerramientasList = () => {
         setLoading(false);
       }
     };
+
     fetchHerramientas();
-  }, []);
+  }, [token]);
 
   const filteredHerramientas = selectedCategory
     ? herramientas.filter(h => h.categoria === selectedCategory)
@@ -78,7 +89,10 @@ const HerramientasList = () => {
     try {
       const response = await fetch('http://localhost:8080/api/reservas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           herramientaId: herramientaSeleccionada.id,
           usuarioId,
