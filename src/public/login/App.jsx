@@ -123,21 +123,5 @@ function App() {
   )
 }
 
-        {/* Contenido principal */}
-        <main className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<HerramientasList />} />
-            <Route path="/agregar" element={<AgregarHerramienta />} />
-            <Route path="/editar-herramienta/:id" element={<EditarHerramienta />} />
-            <Route path="/listadoHerramientaProveedor" element={<ListaHerramientasProveedor proveedorId={1} />} />
-            <Route path="/reserva" element={<Reservas />} />
-
-
-          </Routes>
-        </main>
-      </div>
-    </Router>
-  );
-};
 
 export default App;
