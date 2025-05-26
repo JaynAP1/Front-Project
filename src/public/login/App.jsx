@@ -20,6 +20,24 @@ function App() {
   const handleChange = (e) => {
     setUser({...user, [e.target.name]: e.target.value})
   }
+  const obtenerUsuaior = async (email, token) => {
+    try {
+      const res = await fetch(`http://localhost:8080/usuarios/email?email=${email}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error('Error al obtener el usuario');
+
+      return await res.json();
+    } catch (err) {
+      console.error(err.message);
+      return null;
+    }
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,13 +68,17 @@ function App() {
         }
         return res.json();
     })
-    .then(data => {
+    .then(async data => {
         if (data.token) {
-            localStorage.setItem('id', data.id);
+            console.log("entro");
+            
+            const usuario = await obtenerUsuaior(data.email, data.token);
+            localStorage.setItem('id', usuario.id);
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', data.email ? data.email : user.email);
             localStorage.setItem('name', data.nombre1 ? data.nombre1 : user.name);
             localStorage.setItem('lastname', data.apellido1 ? data.apellido1 : user.lastname);
+            localStorage.setItem('rol', usuario.rol ? usuario.rol : 'user');
             navigate('/home');
         }
     })

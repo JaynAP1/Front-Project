@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './Reservas.css';
+import Header from '../../components/header/Header';
 
 function Reservas() {
     const [reservas, setReservas] = useState([]);
     const [error, setError] = useState('');
+    const [cantidad, setCantidad] = useState('');
     const [fechaInicio, setFechaInicio] = useState(null);
     const [fechaFin, setFechaFin] = useState(null);
     const [estado, setEstado] = useState('');
@@ -12,16 +15,42 @@ function Reservas() {
     const [reservaIdActualizar, setReservaIdActualizar] = useState('');
     const [fechaFinActualizar, setFechaFinActualizar] = useState('');
     const [estadoActualizar, setEstadoActualizar] = useState('');
+    const [cantidadActualizar, setCantidadActualizar] = useState('');
 
+    let url='';
 
-    const obtenerReservas = () => {
-        fetch('http://localhost:8080/reservas/', {
-            method: 'POST',
+    const id_user=localStorage.getItem('id');
+    console.log(localStorage);
+    
+    
+    let rol=localStorage.getItem('rol')
+    if (rol.toLocaleLowerCase=='admin') {
+        url=`http://localhost:8080/reservas/`
+        
+    }
+    else if(rol.toLocaleLowerCase=='proveedor'){
+        url=`http://localhost:8080/reservas/por_proveedor?id=${id_user}`
+        
+    }
+    else{
+        url=`http://localhost:8080/reservas/usuarioId?id=${id_user}`
+    }
+
+    const navigate = useNavigate();
+
+    const token = localStorage.getItem('token');
+    useEffect(() => {
+        if (!token) {
+            navigate('/login');
+        }
+    }, [navigate]);
+    const obtenerReservas = (url) => {
+        fetch(url, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Authorization': `Bearer ${token}`
+                
             },
-            credentials: 'same-origin'
         })
         .then(res => {
             if (!res.ok) throw new Error('Error al obtener las reservas');
@@ -51,12 +80,10 @@ function Reservas() {
         }
         
         fetch(`http://localhost:8080/reservas/?${queryParams.toString()}`, {
-            method: 'POST',
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            credentials: 'same-origin',
+                'Authorization': `Bearer ${token}`
+            }
         })
         .then(res => {
             if (!res.ok) throw new Error('Error al filtrar reservas');
@@ -67,12 +94,12 @@ function Reservas() {
     };
 
     useEffect(() => {
-        obtenerReservas();
+        obtenerReservas(url);
     }, []);
 
     return (
         <>
-         
+        <Header/>
             <div className="reservas-container">
                 <h1 className='tittle'>Lista de Reservas</h1>
 
@@ -121,6 +148,7 @@ function Reservas() {
                                 <th>Fecha Fin</th>
                                 <th>Cliente</th>
                                 <th>Herramienta</th>
+                                <th>Cantidad</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,6 +160,7 @@ function Reservas() {
                                     <td>{reserva.fechaFin}</td>
                                     <td>{reserva.cliente?.nombre || 'Sin cliente'}</td>
                                     <td>{reserva.herramienta?.nombre || 'Sin herramienta'}</td>
+                                    <td>{reserva.cantidad || 0}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -143,23 +172,23 @@ function Reservas() {
                         <h2>Crear Reserva</h2>
                         <form onSubmit={e => {
                             e.preventDefault();
-                            fetch(`http://localhost:8080/reservas/crear?usuarioId=${usuarioId}&herramientaId=${herramientaId}&fechaInicio=${fechaInicio+':00'}&fechaFin=${fechaFin+':00'}`, {
+                            fetch(`http://localhost:8080/reservas/crear?usuarioId=${usuarioId}&herramientaId=${herramientaId}&fechaInicio=${fechaInicio+':00'}&fechaFin=${fechaFin+':00'}&cantidad=${cantidad}`, {
                                 method: 'POST',
                                 headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json'
+                                    'Authorization': `Bearer ${token}`
                                 },
-                                credentials: 'same-origin',
                             })
+
                             .then(res => {
-                                if (!res.ok) throw new Error("Error al crear la reserva");
+                                if (!res.ok) throw new Error("Error al crear la reserva",res);
                                 return res.json();
                             })
                             .then(() => {
-                                obtenerReservas();
+                                obtenerReservas(url);
                                 setUsuarioId('');
                                 setHerramientaId('');
                                 setFechaInicio('');
+                                setCantidad('')
                                 setFechaFin('');
                             })
                             .catch(err => setError(err.message));
@@ -175,6 +204,9 @@ function Reservas() {
                             
                             <label>Fecha Fin:</label>
                             <input type="datetime-local" value={fechaFin} onChange={e => setFechaFin(e.target.value)} required />
+
+                            <label>Cantidad:</label>
+                            <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} required />
                             
                             <button type="submit">Crear Reserva</button>
                         </form>
@@ -185,7 +217,6 @@ function Reservas() {
                         <form onSubmit={async e => {
                             e.preventDefault();
                             try {
-                                // Paso 1: Obtener los datos actuales de la reserva
                                 const respuesta = await fetch(`http://localhost:8080/reservas/id/?id_reserva=${reservaIdActualizar}`, {
                                     method: 'GET'
                                 });
@@ -199,20 +230,21 @@ function Reservas() {
                                 const estadoFinal = estadoActualizar || reservaActual.estado;
                                 console.log(estadoFinal+fechaFinal);
                                 
-                                // Paso 3: Enviar la solicitud de actualización
-                                await fetch(`http://localhost:8080/reservas/actualizar?reservaId=${reservaIdActualizar}&fechaFin=${fechaFinal}&estado=${estadoFinal}`, {
+                               const cantidadFinal = cantidadActualizar || reservaActual.cantidad;
+
+                                await fetch(`http://localhost:8080/reservas/actualizar?reservaId=${reservaIdActualizar}&fechaFin=${fechaFinal}&estado=${estadoFinal}&cantidad=${cantidadFinal}`, {
                                     method: 'PUT',
                                     headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json'
-                                    },
-                                    credentials: 'same-origin',
+                                        'Authorization': `Bearer ${token}`
+                                    }
                                 });
 
-                                obtenerReservas();
+                                obtenerReservas(url);
                                 setReservaIdActualizar('');
                                 setFechaFinActualizar('');
                                 setEstadoActualizar('');
+                                setCantidadActualizar('');
+
                                 setError('');
                             } catch (err) {
                                 setError(err.message);
@@ -224,6 +256,9 @@ function Reservas() {
                             
                             <label>Fecha Fin:</label>
                             <input type="datetime-local" value={fechaFinActualizar} onChange={e => setFechaFinActualizar(e.target.value)}/>
+                            
+                            <label>Cantidad:</label>
+                            <input type="number" value={cantidadActualizar} onChange={e => setCantidadActualizar(e.target.value)} />
                             
                             <label>Estado:</label>
                             <select value={estadoActualizar} onChange={e => setEstadoActualizar(e.target.value)}>
