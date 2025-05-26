@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { Link } from 'react-router-dom';
 import MiGrafico from '../../components/charts/chart1';
-import Header from '../../components/header/Header';
+import Header from '../../components/Header/Header';
 
 function Home() {
     const navigate = useNavigate();
