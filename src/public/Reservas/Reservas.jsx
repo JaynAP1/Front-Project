@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './Reservas.css';
 import Header from '../../components/header/Header';
+import FormularioCrearReserva from '../../components/crearReserva/FormularioCrearReserva';
+
 
 function Reservas() {
     const [reservas, setReservas] = useState([]);
@@ -16,47 +18,56 @@ function Reservas() {
     const [fechaFinActualizar, setFechaFinActualizar] = useState('');
     const [estadoActualizar, setEstadoActualizar] = useState('');
     const [cantidadActualizar, setCantidadActualizar] = useState('');
+    const [rol, setRol] = useState('');
+    const [url, setUrl] = useState('');
 
-    let url='';
+    const formatearFecha = (fecha) =>
+        new Date(fecha).toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" });
 
     const id_user=localStorage.getItem('id');
-    console.log(localStorage);
     
-    
-    let rol=localStorage.getItem('rol')
-    if (rol.toLocaleLowerCase=='admin') {
-        url=`http://localhost:8080/reservas/`
+    useEffect(() => {
+        const storedRol = localStorage.getItem('rol')?.toLowerCase();
         
-    }
-    else if(rol.toLocaleLowerCase=='proveedor'){
-        url=`http://localhost:8080/reservas/por_proveedor?id=${id_user}`
+        const id = localStorage.getItem('id');
+        setRol(storedRol);
+        setUsuarioId(id);
         
-    }
-    else{
-        url=`http://localhost:8080/reservas/usuarioId?id=${id_user}`
-    }
+        if (storedRol=='admin') {
+            setUrl(`http://localhost:8080/reservas/`)
+        }
+        else if(storedRol=='proveedor'){
+            setUrl(`http://localhost:8080/reservas/por_proveedor?id=${id_user}`)
+        }
+        else if(storedRol=='user'){
+            setUrl(`http://localhost:8080/reservas/usuarioId?id=${id_user}`)
+        }
+    }, []);
+
 
     const navigate = useNavigate();
-
+    
     const token = localStorage.getItem('token');
     useEffect(() => {
         if (!token) {
             navigate('/login');
         }
     }, [navigate]);
-    const obtenerReservas = (url) => {
+    const obtenerReservas = () => {
+        
         fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
-                
             },
         })
         .then(res => {
             if (!res.ok) throw new Error('Error al obtener las reservas');
             return res.json();
         })
-        .then(data => setReservas(data))
+        .then(data => {
+            setReservas(data);            
+        })
         .catch(err => setError(err.message));
     };
 
@@ -94,8 +105,10 @@ function Reservas() {
     };
 
     useEffect(() => {
-        obtenerReservas(url);
-    }, []);
+        if (url) {
+            obtenerReservas();
+        }
+    }, [url]);
 
     return (
         <>
@@ -156,9 +169,9 @@ function Reservas() {
                                 <tr key={reserva.id}>
                                     <td>{reserva.id}</td>
                                     <td>{reserva.estado}</td>
-                                    <td>{reserva.fechaInicio}</td>
-                                    <td>{reserva.fechaFin}</td>
-                                    <td>{reserva.cliente?.nombre || 'Sin cliente'}</td>
+                                    <td>{formatearFecha(reserva.fechaInicio)}</td>
+                                    <td>{formatearFecha(reserva.fechaFin)}</td>
+                                    <td>{reserva.cliente?.nombre1+' '+reserva.cliente.apellido1 || 'Sin cliente'}</td>
                                     <td>{reserva.herramienta?.nombre || 'Sin herramienta'}</td>
                                     <td>{reserva.cantidad || 0}</td>
                                 </tr>
@@ -168,49 +181,13 @@ function Reservas() {
                 </div>
                 <div className="formularios">
 
-                    <div className="formulario-reservas">
-                        <h2>Crear Reserva</h2>
-                        <form onSubmit={e => {
-                            e.preventDefault();
-                            fetch(`http://localhost:8080/reservas/crear?usuarioId=${usuarioId}&herramientaId=${herramientaId}&fechaInicio=${fechaInicio+':00'}&fechaFin=${fechaFin+':00'}&cantidad=${cantidad}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Bearer ${token}`
-                                },
-                            })
+                    <FormularioCrearReserva
+                        rol={rol}
+                        usuarioId={usuarioId}
+                        token={token}
+                        obtenerReservas={obtenerReservas}
+                    />
 
-                            .then(res => {
-                                if (!res.ok) throw new Error("Error al crear la reserva",res);
-                                return res.json();
-                            })
-                            .then(() => {
-                                obtenerReservas(url);
-                                setUsuarioId('');
-                                setHerramientaId('');
-                                setFechaInicio('');
-                                setCantidad('')
-                                setFechaFin('');
-                            })
-                            .catch(err => setError(err.message));
-                        }}>
-                            <label>Usuario ID:</label>
-                            <input type="number" value={usuarioId} onChange={e => setUsuarioId(e.target.value)} required />
-                            
-                            <label>Herramienta ID:</label>
-                            <input type="number" value={herramientaId} onChange={e => setHerramientaId(e.target.value)} required />
-                            
-                            <label>Fecha Inicio:</label>
-                            <input type="datetime-local" value={fechaInicio} onChange={e => setFechaInicio(e.target.value)} required />
-                            
-                            <label>Fecha Fin:</label>
-                            <input type="datetime-local" value={fechaFin} onChange={e => setFechaFin(e.target.value)} required />
-
-                            <label>Cantidad:</label>
-                            <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} required />
-                            
-                            <button type="submit">Crear Reserva</button>
-                        </form>
-                    </div>
 
                     <div className="formulario-reservas">
                         <h2>Actualizar Reserva</h2>
@@ -239,7 +216,7 @@ function Reservas() {
                                     }
                                 });
 
-                                obtenerReservas(url);
+                                obtenerReservas();
                                 setReservaIdActualizar('');
                                 setFechaFinActualizar('');
                                 setEstadoActualizar('');
