@@ -109,7 +109,7 @@ function App() {
         <h3>Herramientas al alcance de tu mano</h3>
       </header>
       <main>
-        <div className="container">
+        <div className="container1">
           <div className="box2">
             <div className="box1">
               <img className='Casco' src={'./src/assets/casco.png'} alt="casco" />

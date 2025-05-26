@@ -111,7 +111,7 @@ function Home() {
         <div className="perfil-container">
             <Header />
             <main>
-                <div className="container">
+                <div className="container2">
                     <div className="perfilBox">
                         <div className="userIMG">
                             <img src="https://www.pngitem.com/pimgs/m/551-5510463_default-user-image-png-transparent-png.png" />
