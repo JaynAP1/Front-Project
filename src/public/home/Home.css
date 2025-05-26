@@ -1,17 +1,26 @@
 .user {
-  width: 40px;
-  height: 40px;
-  background-color: #A5ABAF;
-  border-radius: 50%;
-  margin-right: 10px;
-  margin-left: 100px;
-  cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-color: #A5ABAF;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-left: 100px;
+    cursor: pointer;
+}
+.container1 {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #2F2A25;
+    height: calc(100vh-3rem);
+    overflow: hidden;
 }
 .Bienvenida {
     font-size: 2em;
     text-align: center;
     margin-left: 100px;
     color: white;
+    z-index: 3;
 }
 
 .user-buttons {
@@ -98,25 +107,45 @@
     cursor: pointer;
 
 }
-.box {
+.imagenD{
+    z-index: 1;
     position: relative;
-    top: 0;
-    left: 40em;
-    background-color: #3f3c3a;
-    width: 60em;
-    height: 60em;
-    rotate: 60deg;
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20%;
 }
-.box2{
-    width: 60em;
-    height: 60em;
-    background-color: #32373D;
+.box4 {
+    position: absolute;
+    background-color: #3f3c3a;
+    width: clamp(10rem,60vw,55rem);
+    height: clamp(10rem,60vw,55rem);
+    rotate: 60deg;
+    left: 30%;
+}
+.box3{
+    background-color: #3f3c3a;
+    position: absolute;
+    width: clamp(10rem,60vw,55rem);
+    height: clamp(10rem,60vw,55rem);
+    rotate: 90deg;
+    left: 30%;
+}
+.box5{
+    background-color: #3f3c3a;
+    position: absolute;
+    width: clamp(10rem,60vw,55rem);
+    height: clamp(10rem,60vw,55rem);
+    rotate: 120deg;
+    left: 30%;
 }
 .martillo{
-    rotate: 180deg;
-    position: relative;
-    bottom: 20em;
-    left: 25em;
+    position: absolute;
+    width: clamp(10rem,60vw,55rem);
+    rotate: -70deg;
+    left: 30%;
 }
 .martillo {
     filter: drop-shadow(1px 1px 0 #A5ABAF)

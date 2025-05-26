@@ -20,7 +20,7 @@ const Header = () => {
 
     return (
         <header className="header">
-            <div className="logoHeader">
+            <div className="logoHeader" onClick={()=> navigate('/home')}>
                 <h1>Lucaje</h1>
                 <img src="src\assets\logoBlanco.png" alt="Logo" />
             </div>

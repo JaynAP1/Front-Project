@@ -73,10 +73,6 @@ function App() {
             console.log("entro");
             
             const usuario = await obtenerUsuaior(data.email, data.token);
-            console.log(usuario);
-            console.log(data);
-            
-            
             localStorage.setItem('id', usuario.id);
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', data.email ? data.email : user.email);
