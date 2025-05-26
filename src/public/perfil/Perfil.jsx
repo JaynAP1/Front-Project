@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './style.css';
-import Header from '../../components/header/Header';
+import Header from '../../components/Header/Header';
 import MiGrafico from '../../components/charts/chart1';
 import { motion, AnimatePresence } from 'framer-motion';
 
