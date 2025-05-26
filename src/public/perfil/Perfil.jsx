@@ -22,6 +22,91 @@ function Home() {
         }
     }, [navigate]);
 
+    const [nombre, setNombre] = useState('');
+    const [resultado, setResultado] = useState(null);
+    
+    useEffect(() => {
+        if (nombre.trim() === '') return;
+    
+        const delayDebounce = setTimeout(() => {
+        fetch(`http://localhost:8080/usuarios/exists/${nombre}`, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+            .then(async res => {
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || res.statusText);
+            }
+            return res.json();
+            })
+            .then(data => {
+            setResultado(data);
+            })
+            .catch(err => {
+            console.error('Error de verificación:', err.message);
+            setResultado(null);
+            });
+        }, 500); 
+
+        return () => clearTimeout(delayDebounce);
+    }, [nombre]);
+
+    const [editUser, setEditUser] = useState({
+        nombre1: '',
+        nombre2: '',
+        apellido1: '',
+        apellido2: '',
+        email: '',
+        phone: '',
+        rol: 'USER',
+    });
+    
+    useEffect(() => {
+        if (resultado) {
+            setEditUser({
+                nombre1: resultado.nombre1 || '',
+                nombre2: resultado.nombre2 || '',
+                apellido1: resultado.apellido1 || '',
+                apellido2: resultado.apellido2 || '',
+                email: resultado.email || '',
+                phone: resultado.phone || '',
+                rol: resultado.rol || 'USER',
+            });
+        }
+    }, [resultado]);
+    
+
+    const saveData = () => {
+        fetch('http://localhost:8080/usuarios/save-info', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(editUser),
+        })
+            .then(async (res) => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || res.statusText);
+                }
+                return res.json();
+            })
+            .then(data => {
+                alert('Usuario actualizado correctamente');
+                console.log('Guardado:', data);
+            })
+            .catch(err => {
+                alert('Error al guardar el usuario: ' + err.message);
+                console.error('Error al guardar:', err);
+            });
+    };
+    
     return (
         <div className="perfil-container">
             <Header />
@@ -29,12 +114,12 @@ function Home() {
                 <div className="container">
                     <div className="perfilBox">
                         <div className="userIMG">
-
+                            <img src="https://www.pngitem.com/pimgs/m/551-5510463_default-user-image-png-transparent-png.png" />
                         </div>
                         <div className="userData">
                             <label htmlFor="">Nombre</label>
                             <input type="text" defaultValue={localStorage.getItem('name')+" "+localStorage.getItem('lastname')} />
-                            <label htmlFor="">Numero</label>
+                            <label htmlFor="">Telefono</label>
                             <input type="text" defaultValue={localStorage.getItem('number')} />
                             <label htmlFor="">Correo</label>
                             <input type="text" defaultValue= {localStorage.getItem('email')}/>
@@ -49,7 +134,7 @@ function Home() {
                             >
                                 Registros
                             </h4>
-                            {localStorage.getItem('role') == 1 ? <h4
+                            {localStorage.getItem('role') == "ADMIN" ? <h4
                                 onClick={() => setActiveSection('usuarios')}
                                 className={activeSection === 'usuarios' ? 'active-tab' : 'inactive-tab'}
                             >
@@ -61,7 +146,8 @@ function Home() {
                         </div>
                         <div className="SearchUser">
                             {activeSection === 'usuarios' && (
-                                <input type="text" placeholder='Buscar por nombre'/>
+                                <input type="text"  placeholder='Buscar por nombre' value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}/>
                             )}
                         </div>
                         {activeSection === 'usuarios' && (
@@ -76,28 +162,30 @@ function Home() {
                               {
                                 <div className="userEdit">
                                 <div className="imgUser">
-                                <div className="userIMG"></div>
+                                <div className="userIMG">
+                                    <img src="https://www.pngitem.com/pimgs/m/551-5510463_default-user-image-png-transparent-png.png" />
+                                </div>
                                 <div className="roleUser">
-                                    <select defaultValue="opcion2">
-                                    <option value="opcion1">Administrador</option>
-                                    <option value="opcion2">Proovedor</option>
-                                    <option value="opcion3">Usuario</option>
+                                    <select value={editUser.rol} onChange={(e) => setEditUser({ ...editUser, rol: e.target.value })}>
+                                        <option value="ADMIN">Administrador</option>
+                                        <option value="PROOV">Proovedor</option>
+                                        <option value="USER">Usuario</option>
                                     </select>
                                 </div>
                                 </div>
                                 <div className="userDataEdit">
-                                <label>Primer nombre</label>
-                                <input type="text" defaultValue={localStorage.getItem('name')} />
-                                <label>Segundo nombre</label>
-                                <input type="text" defaultValue={localStorage.getItem('secondname')} />
-                                <label>Primer apellido</label>
-                                <input type="text" defaultValue={localStorage.getItem('lastname')} />
-                                <label>Segundo apellido</label>
-                                <input type="text" defaultValue={localStorage.getItem('secondlastname')} />
-                                <label>Correo</label>
-                                <input type="text" defaultValue={localStorage.getItem('email')} />
-                                <label>Telefonjo</label>
-                                <input type="text" defaultValue={localStorage.getItem('phone')} />
+                                    <label>Primer nombre</label>
+                                    <input type="text" value={editUser.nombre1} onChange={(e) => setEditUser({ ...editUser, nombre1: e.target.value })} />
+                                    <label>Segundo nombre</label>
+                                    <input type="text" value={editUser.nombre2} onChange={(e) => setEditUser({ ...editUser, nombre2: e.target.value })} />
+                                    <label>Primer apellido</label>
+                                    <input type="text" value={editUser.apellido1} onChange={(e) => setEditUser({ ...editUser, apellido1: e.target.value })} />
+                                    <label>Segundo apellido</label>
+                                    <input type="text" value={editUser.apellido2} onChange={(e) => setEditUser({ ...editUser, apellido2: e.target.value })} />
+                                    <label>Correo</label>
+                                    <input type="text" value={editUser.email} onChange={(e) => setEditUser({ ...editUser, email: e.target.value })} />
+                                    <label>Telefono</label>
+                                    <input type="text" value={editUser.phone} onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}/>
                                 </div>
                             </div>
                               }
@@ -123,7 +211,7 @@ function Home() {
                         )}
                         {activeSection === 'usuarios' && (
                             <div className="Registros">
-                                <button>Guardar</button>
+                                <button onClick={saveData}>Guardar</button>
                             </div>
                         )}
 
@@ -135,4 +223,3 @@ function Home() {
 }
 
 export default Home;
-

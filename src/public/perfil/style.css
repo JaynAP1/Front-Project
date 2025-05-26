@@ -22,6 +22,11 @@
     width: 200px;
     height: 200px;
     border-radius: 10em;
+    overflow: hidden;
+}
+.userIMG img{
+    width: 200px;
+    height: 200px;
 }
 .userData{
     display: flex;
