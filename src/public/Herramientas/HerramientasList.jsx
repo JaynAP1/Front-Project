@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './HerramientasList.css';
-
+import Header from '../../components/Header/Header';
 const HerramientasList = () => {
   const [herramientas, setHerramientas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,66 +54,7 @@ const HerramientasList = () => {
     ? herramientas.filter(h => h.categoria === selectedCategory)
     : herramientas;
 
-  const abrirModalReserva = (herramienta) => {
-    setHerramientaSeleccionada(herramienta);
-    setFechaInicio('');
-    setFechaFin('');
-    setUsuarioId('');
-    setReservaError(null);
-    setReservaSuccess(null);
-    setModalOpen(true);
-  };
-
-  const cerrarModalReserva = () => {
-    setModalOpen(false);
-    setHerramientaSeleccionada(null);
-  };
-
-  const manejarReserva = async (e) => {
-    e.preventDefault();
-
-    if (!usuarioId || !fechaInicio || !fechaFin) {
-      setReservaError('Completa todos los campos');
-      return;
-    }
-
-    if (fechaFin < fechaInicio) {
-      setReservaError('La fecha fin no puede ser anterior a la fecha inicio');
-      return;
-    }
-
-    setReservaLoading(true);
-    setReservaError(null);
-    setReservaSuccess(null);
-
-    try {
-      const response = await fetch('http://localhost:8080/api/reservas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          herramientaId: herramientaSeleccionada.id,
-          usuarioId,
-          fechaInicio,
-          fechaFin,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al realizar la reserva');
-      }
-
-      setReservaSuccess('Reserva realizada con éxito');
-      setTimeout(() => cerrarModalReserva(), 2000);
-    } catch (err) {
-      setReservaError(err.message);
-    } finally {
-      setReservaLoading(false);
-    }
-  };
+  
 
   if (loading) {
     return (
@@ -143,10 +84,10 @@ const HerramientasList = () => {
   }
 
   return (
-    <div className="container">
-      <div className="contenedorTitul">
-        <h2 className="title">Herramientas Disponibles</h2>
-        <div className="w-full md:w-64">
+    <>
+    <Header/>
+    <div>
+        
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -157,8 +98,10 @@ const HerramientasList = () => {
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-        </div>
       </div>
+    <div className="container">
+      
+      
 
       {filteredHerramientas.length === 0 ? (
         <div className="no-items">
@@ -189,6 +132,9 @@ const HerramientasList = () => {
               </div>
               <div className="card-body">
                 <h2 className="card-title">{herramienta.nombre}</h2>
+                <div className="card-meta">
+                  <strong>ID:</strong> {herramienta.id}
+                </div>
                 <p className="card-desc">{herramienta.descripcion}</p>
                 <div className="card-meta">
                   <strong>Categoría:</strong> {herramienta.categoria}
@@ -198,12 +144,7 @@ const HerramientasList = () => {
                     <strong>Proveedor:</strong> {herramienta.proveedor.nombre}
                   </div>
                 )}
-                <button
-                  className="btn-rent"
-                  onClick={() => abrirModalReserva(herramienta)}
-                >
-                  Rentar Ahora
-                </button>
+               
               </div>
             </div>
           ))}
@@ -257,6 +198,7 @@ const HerramientasList = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

@@ -27,6 +27,7 @@ const Header = () => {
             <div className="directions">
                 <h4 onClick={()=> navigate('/herramientas')}>Catalogo</h4>
                 <h4 onClick={() => navigate('/reserva')}>Reservas</h4>
+                <h4 onClick={() => navigate('/listadoHerramientaProveedor')}>Proveedor</h4>
                 
             </div>
             <div className="user">
